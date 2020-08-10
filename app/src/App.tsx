@@ -1,24 +1,43 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Header from './components/Header/Header';
+import Grid from '@material-ui/core/Grid';
+import { Theme, makeStyles, createStyles } from '@material-ui/core/styles';
+import SearchBar from './components/SearchBar/SearchBar';
 
-function App() {
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    container: {
+      [theme.breakpoints.down('md')]: {
+        paddingTop: 20,
+        paddingBottom: 20,
+        width: '90%',
+        margin: 'auto'
+      },
+      [theme.breakpoints.up('md')]: {
+        paddingTop: 100,
+        paddingBottom: 100,
+        width: 900,
+        margin: 'auto'
+      }
+    }
+  }
+  ))
+
+const App = () => {
+
+  const classes = useStyles();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={classes.container}>
+      <Grid justify='center' style={{ display: 'flex' }} container spacing={0}>
+        <Grid item xs={12}>
+          <Header />
+        </Grid>
+        <Grid item xs={12}>
+          <SearchBar/>
+        </Grid>
+      </Grid>
     </div>
   );
 }
