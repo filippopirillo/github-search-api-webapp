@@ -10,9 +10,11 @@ import { ThunkDispatch } from 'redux-thunk';
 import { Actions } from './types';
 import { bindActionCreators } from 'redux';
 import { dispatchSetUsers } from './actions/users';
-import { Button } from '@material-ui/core';
+import { Button, Tabs, Tab, Hidden } from '@material-ui/core';
 import { usersReducer } from './reducers/users';
 import { connect } from 'react-redux';
+import CustomTabs, { TabPosition } from './components/Tabs/CustomTabs';
+import { TabPanel, TabContext } from '@material-ui/lab';
 
 interface AppProps {
 
@@ -43,6 +45,23 @@ const useStyles = makeStyles((theme: Theme) =>
         width: 900,
         margin: 'auto'
       }
+    },
+    fullWidth: {
+      width: '100%',
+      maxWidth: 'none',
+      fontFamily: 'Montserrat',
+      color: 'primary'
+      // justifyContent: 'left'
+    },
+    tabsContainer1: {
+      marginRight: 20
+    },
+    tabsContainer2: {
+      marginLeft: 20
+    },
+    wrapper: {
+      justifyContent: 'normal',
+      flexDirection: 'inherit'
     }
   }
   ))
@@ -57,8 +76,29 @@ const App: React.FC<Props> = (props) => {
           <Header />
         </Grid>
         <Grid item xs={12}>
-          <SearchBar/>
+          <SearchBar />
         </Grid>
+        <Hidden smDown>
+          <Grid item xs={6}>
+            <CustomTabs
+              tabElements={[{ label: 'Users' }]}
+              position={TabPosition.Left}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <CustomTabs
+              tabElements={[{ label: 'Companies' }]}
+              position={TabPosition.Right}
+            />
+          </Grid>
+        </Hidden>
+        <Hidden mdUp>
+          <Grid item xs={12}>
+            <CustomTabs
+              tabElements={[{ label: 'Users' }, { label: 'Companies' }]}
+            />
+          </Grid>
+        </Hidden>
       </Grid>
     </div>
   );
@@ -68,7 +108,7 @@ const mapStateToProps = (state: State, ownProps: AppProps): LinkStateProps => ({
   users: state.users
 });
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<any,any, Actions>, ownProps: AppProps): LinkDispatchProps => ({
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, Actions>, ownProps: AppProps): LinkDispatchProps => ({
   dispatchSetUsers: bindActionCreators(dispatchSetUsers, dispatch)
 });
 
