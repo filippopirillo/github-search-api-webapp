@@ -1,10 +1,13 @@
 import React from 'react';
+import { Grid } from '@material-ui/core';
 
 const Header = () => {
     return (
-        <h1>
-            Search for GitHub Users
-        </h1>
+        <Grid item xs={12}>
+            <h1>
+                Search for GitHub Users
+            </h1>
+        </Grid>
     )
 }
 

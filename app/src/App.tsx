@@ -4,31 +4,14 @@ import Header from './components/Header/Header';
 import Grid from '@material-ui/core/Grid';
 import { Theme, makeStyles, createStyles } from '@material-ui/core/styles';
 import SearchBar from './components/SearchBar/SearchBar';
-import { User } from './types/User';
-import { State } from './store/configureStore';
-import { ThunkDispatch } from 'redux-thunk';
-import { Actions } from './types';
-import { bindActionCreators } from 'redux';
-import { dispatchSetUsers } from './actions/users';
-import { Button, Tabs, Tab, Hidden } from '@material-ui/core';
-import { usersReducer } from './reducers/users';
-import { connect } from 'react-redux';
-import CustomTabs, { TabPosition } from './components/Tabs/CustomTabs';
-import { TabPanel, TabContext } from '@material-ui/lab';
-
-interface AppProps {
-
-}
-
-interface LinkStateProps {
-  users: User[]
-}
-
-interface LinkDispatchProps {
-  dispatchSetUsers: () => void
-}
-
-type Props = AppProps & LinkStateProps & LinkDispatchProps
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+import EmptyPage from './components/EmptyPage/EmptyPage';
+import ResultPage from './components/ResultPage/ResultPage';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -45,71 +28,27 @@ const useStyles = makeStyles((theme: Theme) =>
         width: 900,
         margin: 'auto'
       }
-    },
-    fullWidth: {
-      width: '100%',
-      maxWidth: 'none',
-      fontFamily: 'Montserrat',
-      color: 'primary'
-      // justifyContent: 'left'
-    },
-    tabsContainer1: {
-      marginRight: 20
-    },
-    tabsContainer2: {
-      marginLeft: 20
-    },
-    wrapper: {
-      justifyContent: 'normal',
-      flexDirection: 'inherit'
     }
   }
   ))
 
-const App: React.FC<Props> = (props) => {
+const App: React.FC = () => {
   const classes = useStyles();
 
   return (
     <div className={classes.container}>
-      <Grid justify='center' style={{ display: 'flex' }} container spacing={0}>
-        <Grid item xs={12}>
+      <Router>
+        <Grid justify='center' style={{ display: 'flex' }} container spacing={0}>
           <Header />
-        </Grid>
-        <Grid item xs={12}>
           <SearchBar />
+          <Switch>
+            <Route exact path='/' render={() => <EmptyPage />}/>
+            <Route exact path='/:query' render={() => <ResultPage />}/>
+          </Switch>
         </Grid>
-        <Hidden smDown>
-          <Grid item xs={6}>
-            <CustomTabs
-              tabElements={[{ label: 'Users' }]}
-              position={TabPosition.Left}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <CustomTabs
-              tabElements={[{ label: 'Companies' }]}
-              position={TabPosition.Right}
-            />
-          </Grid>
-        </Hidden>
-        <Hidden mdUp>
-          <Grid item xs={12}>
-            <CustomTabs
-              tabElements={[{ label: 'Users' }, { label: 'Companies' }]}
-            />
-          </Grid>
-        </Hidden>
-      </Grid>
+      </Router>
     </div>
   );
 }
 
-const mapStateToProps = (state: State, ownProps: AppProps): LinkStateProps => ({
-  users: state.users
-});
-
-const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, Actions>, ownProps: AppProps): LinkDispatchProps => ({
-  dispatchSetUsers: bindActionCreators(dispatchSetUsers, dispatch)
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;

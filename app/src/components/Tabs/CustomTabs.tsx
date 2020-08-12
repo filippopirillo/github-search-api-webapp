@@ -68,8 +68,8 @@ const CustomTabs: React.FC<TabsProps> = (props) => {
       classes={{
         indicator: clsx(classes.fullWidth, classes.montserrat),
         flexContainer: clsx(
-          props.position == TabPosition.Left && classes.marginRight,
-          props.position == TabPosition.Right && classes.marginLeft
+          // props.position == TabPosition.Left && classes.marginRight,
+          // props.position == TabPosition.Right && classes.marginLeft
         )
       }}
       indicatorColor='primary'
