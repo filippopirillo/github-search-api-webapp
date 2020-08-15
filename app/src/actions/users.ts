@@ -1,89 +1,77 @@
-import { SET_USERS, User, SEARCH_USERS, ADD_USER, CLEAR_USERS } from "../types/User";
-import { Actions } from "../types";
+import { User, CLEAR_USERS, ADD_USERS } from "../types/User";
+import { Actions, UserType } from "../types";
 import { Dispatch } from "react";
 import { State } from "../store/configureStore";
-import { gql } from '@apollo/client';
-import { GitHubUserInfo, GitHubUserData } from "../types/GitHub";
+import { UserNode } from "../types/GitHub";
+import { gitHubToken, methods, getAuthorization, gitHubEndpoint } from ".";
 
-const gitHubToken = '5946e4aae16ccb02184d67e93591dfce6406fb07';
-
-const methods = {
-    POST: "POST",
-    GET: "GET",
-    DELETE: "DELETE"
-};
-
-const fetchGitHubUserInfo = (query: string) => (
-    fetch(`https://api.github.com/search/users?q=${query}%20in:username`,
-        {
-            method: methods.GET
-        })
-);
-
-const fetchGitHubUserData = (login: string) => (
-    fetch('https://api.github.com/graphql',
-        {
-            method: methods.POST,
-            headers: { "Authorization": `Bearer ${gitHubToken}` },
-            body: JSON.stringify({
-                query: `{
-                            user(login:"${login}") {
-                                name
-                                contributionsCollection {
-                                contributionCalendar {
-                                    totalContributions
-                                }
-                                }
-                            }
-                        }`
-            })
-        })
-);
-
-
-export const setUsers = (users: User[]): Actions => ({
-    type: SET_USERS,
+export const addUsers = (users: User[]): Actions => ({
+    type: ADD_USERS,
     users
-});
-
-export const addUser = (user: User): Actions => ({
-    type: ADD_USER,
-    user
-});
-export const searchUsers = (query: string): Actions => ({
-    type: SEARCH_USERS,
-    query
 });
 
 export const clearUsers = (): Actions => ({
     type: CLEAR_USERS
-})
+});
 
-export const dispatchSearchUsers = (query: string) => {
-    return (dispatch: Dispatch<Actions>, getStete: () => State) => {
-        fetchGitHubUserInfo(query)
-            .then(async (response) => {
-                let data = await response.json();
-
-                data.items.map((el: GitHubUserInfo) => {
-                    fetchGitHubUserData(el.login)
-                        .then(async res => {
-                            let userData = await res.json();
-                            console.log('userData', userData);
-                            dispatch(addUser({
-                                type: el.type,
-                                username: el.login,
-                                fullname: userData.data.user.name,
-                                contribuitions: userData.data.user.contributionsCollection.contributionCalendar.totalContributions
-                            }))
-                        })
-                })
-
-            })
-            .catch(error => console.log('errore', error))
-
-    }
+const getUsersQuery = (name: string, cursor?: string): string => {
+    const afterString = cursor ? `, after: "${cursor}"` : '';
+    const query = `{
+                search(query: "${name} in:name type:user", first: 5, type: USER${afterString}) {
+                    nodes {
+                        ... on User {
+                            login
+                            contributionsCollection {
+                                contributionCalendar {
+                                totalContributions
+                                }
+                            }
+                            name
+                        }
+                    }
+                    pageInfo {
+                        hasNextPage
+                        endCursor
+                    }
+                }
+            }`;
+    return query;
 }
+
+const fetchGitHubData = (name: string, cursor?: string) => {
+
+    return fetch(gitHubEndpoint,
+        {
+            method: methods.POST,
+            headers: { "Authorization": getAuthorization() },
+            body: JSON.stringify({
+                query: getUsersQuery(name, cursor)
+            })
+        })
+}
+
+const parseUsers = (rawValue: any): User[] => {
+    return rawValue.data.search.nodes.map((node: UserNode) => {
+        return {
+            type: UserType.USER,
+            fullname: node.name,
+            username: node.login,
+            contribuitions: node.contributionsCollection.contributionCalendar.totalContributions
+        }
+    })
+}
+
+export const dispatchAddUsers = (searchQuery: string) => {
+    return async (dispatch: Dispatch<Actions>, getStete: () => State) => {
+        try {
+            const response = await fetchGitHubData(searchQuery);
+            const users = parseUsers(await response.json());
+            dispatch(addUsers(users));
+        } catch (e) {
+            console.log('error', e);
+        }
+    }    
+} 
 
 export const dispatchClearUsers = () => {
     return (dispatch: Dispatch<Actions>, getStete: () => State) => {

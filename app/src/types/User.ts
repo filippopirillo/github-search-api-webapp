@@ -5,28 +5,17 @@ export interface User {
     contribuitions: number;
 };
 
-export const SET_USERS = 'SET_USERS';
-export const SEARCH_USERS = 'SEARCH_USERS';
-export const ADD_USER = 'ADD_USER';
-export const CLEAR_USERS = 'CLEAR';
+export const ADD_USERS = 'ADD_USERS';
+export const CLEAR_USERS = 'CLEAR_USERS';
 
-export interface SetUsers {
-    type: typeof SET_USERS;
+
+export interface AddUsers {
+    type: typeof ADD_USERS;
     users: User[];
-}
-
-export interface AddUser {
-    type: typeof ADD_USER;
-    user: User;
-}
-
-export interface SearchUsers {
-    type: typeof SEARCH_USERS;
-    query: string
 }
 
 export interface ClearUsers {
     type: typeof CLEAR_USERS;
 }
 
-export type UserActionTypes = SetUsers | SearchUsers | AddUser | ClearUsers;
+export type UserActionTypes = ClearUsers | AddUsers;

@@ -2,18 +2,12 @@ import React, { useState } from 'react';
 import { Tabs, Tab, makeStyles, Theme, createStyles } from '@material-ui/core';
 import clsx from 'clsx';
 
-export enum TabPosition {
-  Left,
-  Right
-}
-
 export interface TabElement {
   label: string,
 }
 
 interface TabsProps {
-  tabElements: TabElement[],
-  position?: TabPosition
+  tabElements: TabElement[]
 }
 
 const getTabWidth = (tabElementCount: number) => {

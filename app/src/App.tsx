@@ -38,7 +38,7 @@ const App: React.FC = () => {
   return (
     <div className={classes.container}>
       <Router>
-        <Grid justify='center' style={{ display: 'flex' }} container spacing={0}>
+        <Grid alignItems='flex-start' container spacing={0}>
           <Header />
           <SearchBar />
           <Switch>

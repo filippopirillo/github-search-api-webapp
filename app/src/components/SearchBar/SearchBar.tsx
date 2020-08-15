@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, makeStyles, Theme, createStyles, Grid } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { Actions } from '../../types';
-import { dispatchSearchUsers, dispatchClearUsers } from '../../actions/users';
+import { dispatchAddUsers, dispatchClearUsers } from '../../actions/users';
 import { State } from '../../store/configureStore';
 import { useHistory } from "react-router-dom";
+import { dispatchClearCompanies } from '../../actions/companies';
 
 interface LinkDispatchProps {
-  dispatchSearchUsers: (query: string) => void;
+  dispatchClearCompanies: () => void;
   dispatchClearUsers: () => void;
 }
 
@@ -26,18 +27,21 @@ const SearchBar: React.FC<LinkDispatchProps> = (props) => {
 
   const classes = useStyles();
   const history = useHistory();
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState(history.location.pathname.slice(1));
 
   const handleSearchIconClick = () => {
-    props.dispatchClearUsers();
-    history.push(`/${searchValue}`, 'state');
+    if (history.location.pathname.slice(1) !== searchValue) {
+      props.dispatchClearUsers();
+      props.dispatchClearCompanies();
+      history.push(`/${searchValue}`);
+    }
   }
 
   const handleFormChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(event.target.value)
   }
 
-  const handleKeyPressed = (event: any) => {
+  const handleKeyPressed = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter') {
       handleSearchIconClick();
     }
@@ -74,8 +78,8 @@ const SearchBar: React.FC<LinkDispatchProps> = (props) => {
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, Actions>): LinkDispatchProps => ({
-  dispatchSearchUsers: bindActionCreators(dispatchSearchUsers, dispatch),
-  dispatchClearUsers: bindActionCreators(dispatchClearUsers, dispatch)
+  dispatchClearUsers: bindActionCreators(dispatchClearUsers, dispatch),
+  dispatchClearCompanies: bindActionCreators(dispatchClearCompanies, dispatch)
 });
 
 export default connect(null, mapDispatchToProps)(SearchBar);

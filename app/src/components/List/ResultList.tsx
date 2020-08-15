@@ -1,16 +1,31 @@
 import React from 'react';
-import { List, ListItem, ListItemAvatar, ListItemText, Divider, Avatar } from '@material-ui/core';
+import { List, ListItem, ListItemAvatar, ListItemText, Divider, Avatar, ListItemSecondaryAction, Theme, makeStyles, createStyles } from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
 import { User } from '../../types/User';
+import { Company } from '../../types/Company';
 
 interface ResultListProps {
-    users: User[]
+    items: {
+        username: string,
+        fullname: string,
+        count: number
+    }[]
 }
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      color: "#0000008A"
+    }
+  }
+  ))
+
 const ResultList: React.FC<ResultListProps> = (props) => {
+
+    const classes = useStyles();
     return (
         <List dense >
-            {props.users.map((user, idx) => (
+            {props.items.map((item, idx) => (
                 <div key={idx}>
                     <ListItem>
                         <ListItemAvatar>
@@ -19,9 +34,12 @@ const ResultList: React.FC<ResultListProps> = (props) => {
                             </Avatar>
                         </ListItemAvatar>
                         <ListItemText
-                            primary={user.username}
-                            secondary={user.fullname}
+                            primary={item.username}
+                            secondary={item.fullname}
                         />
+                        <ListItemSecondaryAction classes={{root: classes.root}}>
+                            {item.count}
+                        </ListItemSecondaryAction>
                     </ListItem>
                     <Divider />
                 </div>

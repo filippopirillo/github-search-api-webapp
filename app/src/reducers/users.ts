@@ -1,15 +1,19 @@
-import { User, UserActionTypes, SET_USERS, ADD_USER, CLEAR_USERS } from "../types/User"
+import { User, UserActionTypes, CLEAR_USERS, ADD_USERS } from "../types/User";
 
-const usersReducerInitialState: User[] = [];
+interface UserState {
+    users: User[];
+    hasBeenFetched: boolean;
+}
 
-const usersReducer = (state: User[] = usersReducerInitialState, action: UserActionTypes): User[] => {
+const usersReducerInitialState: UserState = {
+    users: [],
+    hasBeenFetched: false
+}
+
+const usersReducer = (state: UserState = usersReducerInitialState, action: UserActionTypes): UserState => {
     switch (action.type) {
-        case SET_USERS:
-            console.log("Setting users...");
-            return action.users;
-        case ADD_USER:
-            console.log('Adding user...', action.user)
-            return [...state, action.user];
+        case ADD_USERS:
+            return {users: [...state.users, ...action.users], hasBeenFetched: true};
         case CLEAR_USERS:
             return usersReducerInitialState;
         default:
