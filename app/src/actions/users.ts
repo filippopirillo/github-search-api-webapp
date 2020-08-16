@@ -1,13 +1,22 @@
-import { User, CLEAR_USERS, ADD_USERS } from "../types/User";
+import { User, CLEAR_USERS, ADD_USERS, WAIT_FOR_RESULT } from "../types/User";
 import { Actions, UserType } from "../types";
 import { Dispatch } from "react";
 import { State } from "../store/configureStore";
 import { UserNode } from "../types/GitHub";
 import { gitHubToken, methods, getAuthorization, gitHubEndpoint } from ".";
+import { UserState } from "../reducers/users";
+import { SSL_OP_CISCO_ANYCONNECT } from "constants";
 
-export const addUsers = (users: User[]): Actions => ({
+export const addUsers = (users: User[], cursor: string, hasNextPage: boolean, totalCount: number): Actions => ({
     type: ADD_USERS,
-    users
+    users,
+    cursor,
+    hasNextPage,
+    totalCount
+});
+
+export const waitForResult = (): Actions => ({
+    type: WAIT_FOR_RESULT
 });
 
 export const clearUsers = (): Actions => ({
@@ -27,12 +36,14 @@ const getUsersQuery = (name: string, cursor?: string): string => {
                                 }
                             }
                             name
+                            avatarUrl
                         }
                     }
                     pageInfo {
                         hasNextPage
                         endCursor
                     }
+                    userCount
                 }
             }`;
     return query;
@@ -50,31 +61,53 @@ const fetchGitHubData = (name: string, cursor?: string) => {
         })
 }
 
-const parseUsers = (rawValue: any): User[] => {
-    return rawValue.data.search.nodes.map((node: UserNode) => {
+const parseUsers = (rawValue: any): Partial<UserState> => {
+    const searchResult = rawValue.data.search;
+    const users = searchResult.nodes.map((node: UserNode): User => {
         return {
             type: UserType.USER,
             fullname: node.name,
             username: node.login,
-            contribuitions: node.contributionsCollection.contributionCalendar.totalContributions
+            contributions: node.contributionsCollection.contributionCalendar.totalContributions,
+            avatarUrl: node.avatarUrl
         }
-    })
+    });
+
+    return {
+        users,
+        cursor: searchResult.pageInfo.endCursor,
+        hasNextPage: searchResult.pageInfo.hasNextPage,
+        totalCount: searchResult.userCount
+    }
 }
 
-export const dispatchAddUsers = (searchQuery: string) => {
-    return async (dispatch: Dispatch<Actions>, getStete: () => State) => {
+export const dispatchShowMore = (searchQuery: string) => {
+    return async (dispatch: Dispatch<Actions>, getState: () => State) => {
+        dispatch(waitForResult());
         try {
-            const response = await fetchGitHubData(searchQuery);
-            const users = parseUsers(await response.json());
-            dispatch(addUsers(users));
+            const response = await fetchGitHubData(searchQuery, getState().userState.cursor);
+            const result = parseUsers(await response.json());
+            dispatch(addUsers(result.users!, result.cursor!, result.hasNextPage!, result.totalCount!));
         } catch (e) {
             console.log('error', e);
         }
-    }    
-} 
+    }
+}
+
+export const dispatchAddUsers = (searchQuery: string) => {
+    return async (dispatch: Dispatch<Actions>, getState: () => State) => {
+        try {
+            const response = await fetchGitHubData(searchQuery);
+            const result = parseUsers(await response.json());
+            dispatch(addUsers(result.users!, result.cursor!, result.hasNextPage!, result.totalCount!));
+        } catch (e) {
+            console.log('error', e);
+        }
+    }
+}
 
 export const dispatchClearUsers = () => {
-    return (dispatch: Dispatch<Actions>, getStete: () => State) => {
+    return (dispatch: Dispatch<Actions>, getState: () => State) => {
         dispatch(clearUsers());
     }
 }

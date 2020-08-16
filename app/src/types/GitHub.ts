@@ -2,16 +2,18 @@ export interface UserNode {
     login: string;
     contributionsCollection: {
         contributionCalendar: {
-            totalContributions: number
+            totalContributions: number;
         }
     };
-    name: string
+    name: string;
+    avatarUrl: string;
 }
 
 export interface CompanyNode {
     login: string;
     membersWithRole: {
-        totalCount: number
+        totalCount: number;
     };
     name: string;
+    avatarUrl: string;
 }
