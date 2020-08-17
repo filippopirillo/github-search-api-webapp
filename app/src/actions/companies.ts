@@ -1,4 +1,4 @@
-import { Company, ADD_COMPANIES, CLEAR_COMPANIES } from "../types/Company";
+import { Company, ADD_COMPANIES, CLEAR_COMPANIES, WAIT_FOR_COMPANY_RESULT } from "../types/Company";
 import { Actions, UserType } from "../types";
 import { methods, getAuthorization, gitHubEndpoint } from ".";
 import { CompanyNode } from "../types/GitHub";
@@ -16,6 +16,10 @@ export const addCompanies = (companies: Company[], cursor: string, hasNextPage: 
 
 export const cleanCompanies = (): Actions => ({
     type: CLEAR_COMPANIES
+});
+
+export const waitForResult = (): Actions => ({
+    type: WAIT_FOR_COMPANY_RESULT
 });
 
 export const getCompaniesQuery = (name: string, cursor?: string): string => {
@@ -71,6 +75,20 @@ const parseCompanies = (rawValue: any): Partial<CompanyState> => {
         cursor: searchResult.pageInfo.endCursor,
         hasNextPage: searchResult.pageInfo.hasNextPage,
         totalCount: searchResult.userCount
+    }
+}
+
+export const dispatchShowMoreCompanies = (searchQuery: string) => {
+    return async (dispatch: Dispatch<Actions>, getState: () => State) => {
+        console.log('DISPATCH COMPANY RESULT')
+        dispatch(waitForResult());
+        try {
+            const response = await fetchGitHubData(searchQuery, getState().companyState.cursor);
+            const result = parseCompanies(await response.json());
+            dispatch(addCompanies(result.companies!, result.cursor!, result.hasNextPage!, result.totalCount!));
+        } catch (e) {
+            console.log('error', e);
+        }
     }
 }
 

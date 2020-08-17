@@ -1,4 +1,4 @@
-import { User, CLEAR_USERS, ADD_USERS, WAIT_FOR_RESULT } from "../types/User";
+import { User, CLEAR_USERS, ADD_USERS, WAIT_FOR_USER_RESULT } from "../types/User";
 import { Actions, UserType } from "../types";
 import { Dispatch } from "react";
 import { State } from "../store/configureStore";
@@ -15,12 +15,12 @@ export const addUsers = (users: User[], cursor: string, hasNextPage: boolean, to
     totalCount
 });
 
-export const waitForResult = (): Actions => ({
-    type: WAIT_FOR_RESULT
-});
-
 export const clearUsers = (): Actions => ({
     type: CLEAR_USERS
+});
+
+export const waitForResult = (): Actions => ({
+    type: WAIT_FOR_USER_RESULT
 });
 
 const getUsersQuery = (name: string, cursor?: string): string => {
@@ -81,7 +81,7 @@ const parseUsers = (rawValue: any): Partial<UserState> => {
     }
 }
 
-export const dispatchShowMore = (searchQuery: string) => {
+export const dispatchShowMoreUsers = (searchQuery: string) => {
     return async (dispatch: Dispatch<Actions>, getState: () => State) => {
         dispatch(waitForResult());
         try {

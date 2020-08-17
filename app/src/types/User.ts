@@ -8,8 +8,11 @@ export interface User {
 
 export const ADD_USERS = 'ADD_USERS';
 export const CLEAR_USERS = 'CLEAR_USERS';
-export const WAIT_FOR_RESULT = 'WAIT_FOR_RESULT';
+export const WAIT_FOR_USER_RESULT = 'WAIT_FOR_USER_RESULT';
 
+export interface WaitForUserResult {
+    type: typeof WAIT_FOR_USER_RESULT;
+}
 
 export interface AddUsers {
     type: typeof ADD_USERS;
@@ -23,8 +26,4 @@ export interface ClearUsers {
     type: typeof CLEAR_USERS;
 }
 
-export interface WaitForResult {
-    type: typeof WAIT_FOR_RESULT;
-}
-
-export type UserActionTypes = ClearUsers | AddUsers | WaitForResult;
+export type UserActionTypes = ClearUsers | AddUsers | WaitForUserResult;

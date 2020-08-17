@@ -50,7 +50,7 @@ const SearchBar: React.FC<LinkDispatchProps> = (props) => {
   return (
     <Grid item xs={12}>
       <FormControl fullWidth variant="outlined">
-        <InputLabel classes={{ root: classes.root }} htmlFor="filled-adornment-password">Search</InputLabel>
+        <InputLabel classes={{ root: classes.root }}>Search</InputLabel>
         <OutlinedInput
 
           placeholder="Type a user name"

@@ -1,4 +1,4 @@
-import { User, UserActionTypes, CLEAR_USERS, ADD_USERS, WAIT_FOR_RESULT } from "../types/User";
+import { User, UserActionTypes, CLEAR_USERS, ADD_USERS, WAIT_FOR_USER_RESULT } from "../types/User";
 
 export interface UserState {
     users: User[];
@@ -27,7 +27,7 @@ const usersReducer = (state: UserState = usersReducerInitialState, action: UserA
             };
         case CLEAR_USERS:
             return usersReducerInitialState;
-        case WAIT_FOR_RESULT:
+        case WAIT_FOR_USER_RESULT:
             return {...state, hasBeenFetched: false}
         default:
             return state;

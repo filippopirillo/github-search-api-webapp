@@ -1,4 +1,4 @@
-import { Company, CompanyActionTypes, ADD_COMPANIES, CLEAR_COMPANIES } from "../types/Company";
+import { Company, CompanyActionTypes, ADD_COMPANIES, CLEAR_COMPANIES, WAIT_FOR_COMPANY_RESULT } from "../types/Company";
 
 export interface CompanyState {
     companies: Company[];
@@ -28,6 +28,9 @@ const companiesReducer = (state: CompanyState = companiesReducerInitialState, ac
             };
         case CLEAR_COMPANIES:
             return companiesReducerInitialState;
+        case WAIT_FOR_COMPANY_RESULT:
+            console.log('WAIT FOR COMPANY RESULT DISPATCHED')
+            return { ...state, hasBeenFetched: false }
         default:
             return state;
     }

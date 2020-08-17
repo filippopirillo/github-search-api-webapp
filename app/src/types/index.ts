@@ -3,7 +3,14 @@ import { CompanyActionTypes } from "./Company";
 
 export enum UserType {
     USER = 'User',
-    COMPANY = 'Organization'
+    USERS = 'Users',
+    COMPANY = 'Company',
+    COMPANIES = 'Companies'
 }
 
-export type Actions = UserActionTypes | CompanyActionTypes
+export enum OrderType {
+    DESC = 1,
+    ASC = -1
+}
+
+export type Actions = UserActionTypes | CompanyActionTypes;
