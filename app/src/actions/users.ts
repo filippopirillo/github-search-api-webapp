@@ -3,9 +3,8 @@ import { Actions, UserType } from "../types";
 import { Dispatch } from "react";
 import { State } from "../store/configureStore";
 import { UserNode } from "../types/GitHub";
-import { gitHubToken, methods, getAuthorization, gitHubEndpoint } from ".";
+import { methods, getAuthorization, gitHubEndpoint } from ".";
 import { UserState } from "../reducers/users";
-import { SSL_OP_CISCO_ANYCONNECT } from "constants";
 
 export const addUsers = (users: User[], cursor: string, hasNextPage: boolean, totalCount: number): Actions => ({
     type: ADD_USERS,
@@ -96,9 +95,9 @@ const parseUsers = (rawValue: any): Partial<UserState> => {
     }
 }
 
-const getData = async (searchQuery: string, dispatch: Dispatch<Actions>) => {
+const getData = async (searchQuery: string, dispatch: Dispatch<Actions>, cursor?: string) => {
     try {
-        const response = await fetchGitHubData(searchQuery);
+        const response = await fetchGitHubData(searchQuery, cursor);
         if (response.status === 200) {
             const result = parseUsers(await response.json());
             dispatch(addUsers(result.users!, result.cursor!, result.hasNextPage!, result.totalCount!));
@@ -113,7 +112,7 @@ const getData = async (searchQuery: string, dispatch: Dispatch<Actions>) => {
 export const dispatchShowMoreUsers = (searchQuery: string) => {
     return async (dispatch: Dispatch<Actions>, getState: () => State) => {
         dispatch(waitForResult());
-        getData(searchQuery, dispatch);
+        getData(searchQuery, dispatch, getState().userState.cursor);
 
     }
 }

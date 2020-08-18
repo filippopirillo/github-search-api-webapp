@@ -4,7 +4,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { Actions } from '../../types';
+import { Actions, basePath } from '../../types';
 import { dispatchAddUsers, dispatchClearUsers } from '../../actions/users';
 import { State } from '../../store/configureStore';
 import { useHistory } from "react-router-dom";
@@ -27,13 +27,14 @@ const SearchBar: React.FC<LinkDispatchProps> = (props) => {
 
   const classes = useStyles();
   const history = useHistory();
-  const [searchValue, setSearchValue] = useState(history.location.pathname.slice(1));
+  const historyUrlList = history.location.pathname.split('/');
+  const [searchValue, setSearchValue] = useState(historyUrlList[historyUrlList.length - 1]);
 
   const handleSearchIconClick = () => {
     if (history.location.pathname.slice(1) !== searchValue) {
       props.dispatchClearUsers();
       props.dispatchClearCompanies();
-      history.push(`/${searchValue}`);
+      history.push(`/${basePath}${searchValue}`);
     }
   }
 

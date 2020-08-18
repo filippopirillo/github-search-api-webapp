@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import EmptyPage from './components/EmptyPage/EmptyPage';
 import ResultPage from './components/ResultPage/ResultPage';
+import { basePath } from './types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -42,8 +43,8 @@ const App: React.FC = () => {
           <Header />
           <SearchBar />
           <Switch>
-            <Route exact path='/' render={() => <EmptyPage />}/>
-            <Route exact path='/:query' render={() => <ResultPage />}/>
+            <Route exact path={`/${basePath}:query`} render={() => <ResultPage />}/>
+            <Route path='/' render={() => <EmptyPage />}/>
           </Switch>
         </Grid>
       </Router>

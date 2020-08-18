@@ -19,7 +19,6 @@ const companiesReducerInitialState: CompanyState = {
 const companiesReducer = (state: CompanyState = companiesReducerInitialState, action: CompanyActionTypes): CompanyState => {
     switch (action.type) {
         case ADD_COMPANIES:
-            console.log('Adding companies...');
             return {
                 companies: [...state.companies, ...action.companies],
                 hasBeenFetched: true,
@@ -30,7 +29,6 @@ const companiesReducer = (state: CompanyState = companiesReducerInitialState, ac
         case CLEAR_COMPANIES:
             return companiesReducerInitialState;
         case WAIT_FOR_COMPANY_RESULT:
-            console.log('WAIT FOR COMPANY RESULT DISPATCHED')
             return { ...state, hasBeenFetched: false }
         case SET_COMPANY_ERROR:
             return {...state, error: action.message}

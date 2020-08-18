@@ -1,4 +1,5 @@
-export const gitHubToken = '5946e4aae16ccb02184d67e93591dfce6406fb07';
+import { gitHubToken } from "../properties";
+
 export const gitHubEndpoint = 'https://api.github.com/graphql';
 
 export const methods = {

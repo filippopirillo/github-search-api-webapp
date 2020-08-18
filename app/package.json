@@ -1,5 +1,6 @@
 {
   "name": "app",
+  "homepage": "https://www.filippopirillo.com/search_github_users",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

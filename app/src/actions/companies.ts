@@ -93,9 +93,9 @@ const parseCompanies = (rawValue: any): Partial<CompanyState> => {
     }
 }
 
-const getData = async (searchQuery: string, dispatch: Dispatch<Actions>) => {
+const getData = async (searchQuery: string, dispatch: Dispatch<Actions>, cursor?: string) => {
     try {
-        const response = await fetchGitHubData(searchQuery);
+        const response = await fetchGitHubData(searchQuery, cursor);
         if (response.status === 200) {
             const result = parseCompanies(await response.json());
             dispatch(addCompanies(result.companies!, result.cursor!, result.hasNextPage!, result.totalCount!));
@@ -110,7 +110,7 @@ const getData = async (searchQuery: string, dispatch: Dispatch<Actions>) => {
 export const dispatchShowMoreCompanies = (searchQuery: string) => {
     return (dispatch: Dispatch<Actions>, getState: () => State) => {
         dispatch(waitForResult());
-        getData(searchQuery, dispatch);
+        getData(searchQuery, dispatch, getState().companyState.cursor);
     }
 }
 

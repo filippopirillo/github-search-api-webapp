@@ -30,7 +30,8 @@ type Props = LinkStateProps & LinkDispatchProps
 const ResultPage: React.FC<Props> = (props) => {
 
     const history = useHistory();
-    const query = history.location.pathname.slice(1);
+    const historyUrlList = history.location.pathname.split('/');
+    const query = historyUrlList[historyUrlList.length - 1];
 
     useEffect(() => {
         props.dispatchAddUsers(query);

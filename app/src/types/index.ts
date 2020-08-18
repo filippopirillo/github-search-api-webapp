@@ -1,6 +1,8 @@
 import { UserActionTypes } from "./User";
 import { CompanyActionTypes } from "./Company";
 
+export const basePath = 'search_github_users/'
+
 export enum UserType {
     USER = 'User',
     USERS = 'Users',
