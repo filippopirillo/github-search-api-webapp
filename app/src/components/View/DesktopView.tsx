@@ -35,6 +35,7 @@ const DesktopView: React.FC<ViewProps> = (props) => {
                     hasNextPage={props.userState.hasNextPage}
                     totalCount={props.userState.totalCount}
                     display
+                    error={props.userState.error}
                 />
             </Grid>
             <Grid item xs={6} className={classes.rightContainer}>
@@ -49,6 +50,7 @@ const DesktopView: React.FC<ViewProps> = (props) => {
                     hasNextPage={props.companyState.hasNextPage}
                     totalCount={props.companyState.totalCount}
                     display
+                    error={props.companyState.error}
                 />
             </Grid>
         </Grid>

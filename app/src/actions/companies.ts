@@ -1,4 +1,4 @@
-import { Company, ADD_COMPANIES, CLEAR_COMPANIES, WAIT_FOR_COMPANY_RESULT } from "../types/Company";
+import { Company, ADD_COMPANIES, CLEAR_COMPANIES, WAIT_FOR_COMPANY_RESULT, SET_COMPANY_ERROR } from "../types/Company";
 import { Actions, UserType } from "../types";
 import { methods, getAuthorization, gitHubEndpoint } from ".";
 import { CompanyNode } from "../types/GitHub";
@@ -21,6 +21,21 @@ export const cleanCompanies = (): Actions => ({
 export const waitForResult = (): Actions => ({
     type: WAIT_FOR_COMPANY_RESULT
 });
+
+export const setError = (code: number): Actions => {
+    switch (code) {
+        case 401:
+            return {
+                type: SET_COMPANY_ERROR,
+                message: `Code ${code}: Authorization is invalid. Check token\'s state`
+            }
+        default:
+            return {
+                type: SET_COMPANY_ERROR,
+                message: 'Generic error occurred'
+            }
+    }
+}
 
 export const getCompaniesQuery = (name: string, cursor?: string): string => {
     const afterString = cursor ? `, after: "${cursor}"` : '';
@@ -78,29 +93,30 @@ const parseCompanies = (rawValue: any): Partial<CompanyState> => {
     }
 }
 
-export const dispatchShowMoreCompanies = (searchQuery: string) => {
-    return async (dispatch: Dispatch<Actions>, getState: () => State) => {
-        console.log('DISPATCH COMPANY RESULT')
-        dispatch(waitForResult());
-        try {
-            const response = await fetchGitHubData(searchQuery, getState().companyState.cursor);
+const getData = async (searchQuery: string, dispatch: Dispatch<Actions>) => {
+    try {
+        const response = await fetchGitHubData(searchQuery);
+        if (response.status === 200) {
             const result = parseCompanies(await response.json());
             dispatch(addCompanies(result.companies!, result.cursor!, result.hasNextPage!, result.totalCount!));
-        } catch (e) {
-            console.log('error', e);
+        } else {
+            dispatch(setError(response.status))
         }
+    } catch (e) {
+        console.log('error', e);
+    }
+}
+
+export const dispatchShowMoreCompanies = (searchQuery: string) => {
+    return (dispatch: Dispatch<Actions>, getState: () => State) => {
+        dispatch(waitForResult());
+        getData(searchQuery, dispatch);
     }
 }
 
 export const dispatchAddCompanies = (searchQuery: string) => {
-    return async (dispatch: Dispatch<Actions>, getState: () => State) => {
-        try {
-            const response = await fetchGitHubData(searchQuery);
-            const result = parseCompanies(await response.json());
-            dispatch(addCompanies(result.companies!, result.cursor!, result.hasNextPage!, result.totalCount!));
-        } catch (e) {
-            console.log('error', e);
-        }
+    return (dispatch: Dispatch<Actions>, getState: () => State) => {
+        getData(searchQuery, dispatch);
     }    
 } 
 

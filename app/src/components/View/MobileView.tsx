@@ -25,6 +25,7 @@ const MobileView: React.FC<ViewProps> = (props) => {
                 hasNextPage={props.userState.hasNextPage}
                 totalCount={props.userState.totalCount}
                 display={tabValue === 0}
+                error={props.userState.error}
             />
             <Panel
                 type={UserType.COMPANY}
@@ -34,6 +35,7 @@ const MobileView: React.FC<ViewProps> = (props) => {
                 hasNextPage={props.companyState.hasNextPage}
                 totalCount={props.companyState.totalCount}
                 display={tabValue === 1}
+                error={props.companyState.error}
             />
         </Grid>
     );

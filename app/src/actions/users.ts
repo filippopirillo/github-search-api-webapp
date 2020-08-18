@@ -1,4 +1,4 @@
-import { User, CLEAR_USERS, ADD_USERS, WAIT_FOR_USER_RESULT } from "../types/User";
+import { User, CLEAR_USERS, ADD_USERS, WAIT_FOR_USER_RESULT, SET_USER_ERROR } from "../types/User";
 import { Actions, UserType } from "../types";
 import { Dispatch } from "react";
 import { State } from "../store/configureStore";
@@ -22,6 +22,21 @@ export const clearUsers = (): Actions => ({
 export const waitForResult = (): Actions => ({
     type: WAIT_FOR_USER_RESULT
 });
+
+export const setError = (code: number): Actions => {
+    switch (code) {
+        case 401:
+            return {
+                type: SET_USER_ERROR,
+                message: 'Code 401: Authorization is invalid. Check token\'s state'
+            }
+        default:
+            return {
+                type: SET_USER_ERROR,
+                message: 'Generic error occurred'
+            }
+    }
+}
 
 const getUsersQuery = (name: string, cursor?: string): string => {
     const afterString = cursor ? `, after: "${cursor}"` : '';
@@ -81,28 +96,32 @@ const parseUsers = (rawValue: any): Partial<UserState> => {
     }
 }
 
+const getData = async (searchQuery: string, dispatch: Dispatch<Actions>) => {
+    try {
+        const response = await fetchGitHubData(searchQuery);
+        if (response.status === 200) {
+            const result = parseUsers(await response.json());
+            dispatch(addUsers(result.users!, result.cursor!, result.hasNextPage!, result.totalCount!));
+        } else {
+            dispatch(setError(response.status))
+        }
+    } catch (e) {
+        console.log('error', e);
+    }
+}
+
 export const dispatchShowMoreUsers = (searchQuery: string) => {
     return async (dispatch: Dispatch<Actions>, getState: () => State) => {
         dispatch(waitForResult());
-        try {
-            const response = await fetchGitHubData(searchQuery, getState().userState.cursor);
-            const result = parseUsers(await response.json());
-            dispatch(addUsers(result.users!, result.cursor!, result.hasNextPage!, result.totalCount!));
-        } catch (e) {
-            console.log('error', e);
-        }
+        getData(searchQuery, dispatch);
+
     }
 }
 
 export const dispatchAddUsers = (searchQuery: string) => {
     return async (dispatch: Dispatch<Actions>, getState: () => State) => {
-        try {
-            const response = await fetchGitHubData(searchQuery);
-            const result = parseUsers(await response.json());
-            dispatch(addUsers(result.users!, result.cursor!, result.hasNextPage!, result.totalCount!));
-        } catch (e) {
-            console.log('error', e);
-        }
+        getData(searchQuery, dispatch);
+
     }
 }
 

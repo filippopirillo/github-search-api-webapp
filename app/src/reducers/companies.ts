@@ -1,4 +1,4 @@
-import { Company, CompanyActionTypes, ADD_COMPANIES, CLEAR_COMPANIES, WAIT_FOR_COMPANY_RESULT } from "../types/Company";
+import { Company, CompanyActionTypes, ADD_COMPANIES, CLEAR_COMPANIES, WAIT_FOR_COMPANY_RESULT, SET_COMPANY_ERROR } from "../types/Company";
 
 export interface CompanyState {
     companies: Company[];
@@ -6,6 +6,7 @@ export interface CompanyState {
     totalCount: number;
     hasNextPage: boolean;
     cursor?: string;
+    error?: string;
 }
 
 const companiesReducerInitialState: CompanyState = {
@@ -31,6 +32,8 @@ const companiesReducer = (state: CompanyState = companiesReducerInitialState, ac
         case WAIT_FOR_COMPANY_RESULT:
             console.log('WAIT FOR COMPANY RESULT DISPATCHED')
             return { ...state, hasBeenFetched: false }
+        case SET_COMPANY_ERROR:
+            return {...state, error: action.message}
         default:
             return state;
     }

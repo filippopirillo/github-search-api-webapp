@@ -11,7 +11,8 @@ export interface PanelProps {
     totalCount: number;
     hasNextPage: boolean;
     handleShowMore?: () => any;
-    display: boolean
+    display: boolean;
+    error?: string
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -36,37 +37,44 @@ const useStyles = makeStyles((theme: Theme) =>
 const Panel: React.FC<PanelProps> = (props) => {
 
     const classes = useStyles();
-
-    return (
-        <Grid item xs={12} container style={{display: props.display ? 'inherit' : 'none'}}>
-            <Grid item xs={12}>
-                {props.hasBeenFetched && props.list.length === 0 ?
-                    <EmptyResult userType={props.type} /> :
-                    <ResultList
-                        items={props.list}
-                        firstHeaderButtonLabel={props.type}
-                        secondHeaderButtonLabel={props.type === UserType.USER ? 'Contributions' : 'People'} />
-                }
+    if (props.error) {
+        return (
+            <Grid item xs={12} container style={{ display: props.display ? 'inherit' : 'none' }}>
+                <h3 >{props.error}</h3>
             </Grid>
-            <Grid item xs={12} container direction='column' alignContent='center'>
-                {!props.hasBeenFetched &&
-                    <Grid item style={{ display: 'flex', justifyContent: 'center' }}>
-                        <CircularProgress />
-                    </Grid>
-                }
-                {props.hasNextPage &&
-                    <Grid item>
-                        <Button
-                            className={classes.showMoreButton}
-                            onClick={props.handleShowMore}
-                        >
-                            Show More
+        )
+    } else {
+        return (
+            <Grid item xs={12} container style={{ display: props.display ? 'inherit' : 'none' }}>
+                <Grid item xs={12}>
+                    {props.hasBeenFetched && props.list.length === 0 ?
+                        <EmptyResult userType={props.type} /> :
+                        <ResultList
+                            items={props.list}
+                            firstHeaderButtonLabel={props.type}
+                            secondHeaderButtonLabel={props.type === UserType.USER ? 'Contributions' : 'People'} />
+                    }
+                </Grid>
+                <Grid item xs={12} container direction='column' alignContent='center'>
+                    {!props.hasBeenFetched &&
+                        <Grid item style={{ display: 'flex', justifyContent: 'center' }}>
+                            <CircularProgress />
+                        </Grid>
+                    }
+                    {props.hasNextPage &&
+                        <Grid item>
+                            <Button
+                                className={classes.showMoreButton}
+                                onClick={props.handleShowMore}
+                            >
+                                Show More
                         </Button>
-                    </Grid>
-                }
+                        </Grid>
+                    }
+                </Grid>
             </Grid>
-        </Grid>
-    );
+        )
+    };
 }
 
 export default Panel;
