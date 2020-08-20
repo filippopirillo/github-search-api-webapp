@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Tabs, Tab, makeStyles, Theme, createStyles, Grid } from '@material-ui/core';
+import React from 'react';
+import { Tabs, Tab, makeStyles, Theme, createStyles } from '@material-ui/core';
 import clsx from 'clsx';
 
 interface TabsProps {

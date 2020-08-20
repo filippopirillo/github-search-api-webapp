@@ -3,7 +3,7 @@ import { Hidden } from '@material-ui/core';
 import { State } from '../../store/configureStore';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
-import { Actions, UserType } from '../../types';
+import { Actions } from '../../types';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { dispatchAddUsers, dispatchShowMoreUsers } from '../../actions/users';
