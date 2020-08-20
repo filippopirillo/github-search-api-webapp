@@ -3,7 +3,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import { Theme, makeStyles, createStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 
-const useStyles = makeStyles((theme: Theme) =>
+export const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         container: {
             display: 'flex',
@@ -28,10 +28,10 @@ const EmptyPage: React.FC = () => {
 
     return (
         <Grid item xs={12} className={classes.container}>
-            <SearchIcon className={classes.icon} />
-            <h3 className={classes.caption}>Enter a name or company you are looking for.</h3>
+            <SearchIcon id='search-icon' className={classes.icon} />
+            <h3 id='empty-page-desc' className={classes.caption}>Enter a name or company you are looking for.</h3>
         </Grid>
     )
 }
 
-export default EmptyPage
+export default EmptyPage;

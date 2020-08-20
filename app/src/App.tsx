@@ -1,14 +1,12 @@
 import React from 'react';
-import './App.css';
 import Header from './components/Header/Header';
 import Grid from '@material-ui/core/Grid';
 import { Theme, makeStyles, createStyles } from '@material-ui/core/styles';
 import SearchBar from './components/SearchBar/SearchBar';
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Redirect
 } from "react-router-dom";
 import EmptyPage from './components/EmptyPage/EmptyPage';
 import ResultPage from './components/ResultPage/ResultPage';
@@ -38,16 +36,15 @@ const App: React.FC = () => {
 
   return (
     <div className={classes.container}>
-      <Router>
-        <Grid alignItems='flex-start' container spacing={0}>
-          <Header />
-          <SearchBar />
-          <Switch>
-            <Route exact path={`/${basePath}:query`} render={() => <ResultPage />}/>
-            <Route path='/' render={() => <EmptyPage />}/>
-          </Switch>
-        </Grid>
-      </Router>
+      <Grid alignItems='flex-start' container spacing={0}>
+        <Header />
+        <SearchBar />
+        <Switch>
+          <Route exact path={`/${basePath}:query`} render={() => <ResultPage />} />
+          <Route exact path={`/${basePath}`} render={() => <EmptyPage />} />
+          <Route path='/' render={() => <Redirect to={`/${basePath}`} />} />
+        </Switch>
+      </Grid>
     </div>
   );
 }

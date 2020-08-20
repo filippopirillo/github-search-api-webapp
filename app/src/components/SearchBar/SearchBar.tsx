@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, makeStyles, Theme, createStyles, Grid } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { Actions, basePath } from '../../types';
-import { dispatchAddUsers, dispatchClearUsers } from '../../actions/users';
-import { State } from '../../store/configureStore';
+import { dispatchClearUsers } from '../../actions/users';
 import { useHistory } from "react-router-dom";
 import { dispatchClearCompanies } from '../../actions/companies';
 
@@ -27,8 +26,9 @@ const SearchBar: React.FC<LinkDispatchProps> = (props) => {
 
   const classes = useStyles();
   const history = useHistory();
-  const historyUrlList = history.location.pathname.split('/');
-  const [searchValue, setSearchValue] = useState(historyUrlList[historyUrlList.length - 1]);
+  const regExp = new RegExp(`${basePath}(.*)`)
+  const queryUrl = regExp.exec(history.location.pathname);
+  const [searchValue, setSearchValue] = useState(queryUrl ? queryUrl[1] : '');
 
   const handleSearchIconClick = () => {
     if (history.location.pathname.slice(1) !== searchValue) {

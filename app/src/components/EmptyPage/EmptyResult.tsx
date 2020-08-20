@@ -1,7 +1,5 @@
 import React from 'react';
-import SearchIcon from '@material-ui/icons/Search';
 import { Theme, makeStyles, createStyles } from '@material-ui/core/styles';
-import { Grid } from '@material-ui/core';
 import { UserType } from '../../types';
 
 const useStyles = makeStyles((theme: Theme) =>

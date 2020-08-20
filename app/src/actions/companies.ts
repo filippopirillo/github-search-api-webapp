@@ -27,7 +27,7 @@ export const setError = (code: number): Actions => {
         case 401:
             return {
                 type: SET_COMPANY_ERROR,
-                message: `Code ${code}: Authorization is invalid. Check token\'s state`
+                message: `Code ${code}: Authorization is invalid. Check token's state`
             }
         default:
             return {
