@@ -9,5 +9,3 @@ export const gitHubToken = '<YOUR_TOKEN>';
 
 Be sure to grant `read:user` and `read:org` rules when generating a new personal token.  
 You can generate a personal access token [here](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
-
-You can find the product at https://www.filippopirillo.com/search_github_users
